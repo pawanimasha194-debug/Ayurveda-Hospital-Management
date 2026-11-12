@@ -1,0 +1,205 @@
+/* ============================================================
+   Ayurveda Hospital Management System — Shared Design System
+   Light & Dark Theme
+   ============================================================ */
+
+:root {
+    /* Default Light Theme */
+    --bg: #f5f9f5;
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --ink: #263238;
+    --ink-soft: #5f6f68;
+    --border: #dfece0;
+    --primary: #1b5e20;
+    --primary-dark: #123d16;
+    --primary-soft: #e3f1e4;
+    --accent: #4caf50;
+    --accent-soft: #e1f5e2;
+    --gold: #c9a227;
+    --gold-soft: #f6eecb;
+    --danger: #c62828;
+    --danger-soft: #f8d7d7;
+    --success: #2e7d32;
+    --success-soft: #dcefdc;
+    
+    --radius: 6px;
+    --radius-lg: 10px;
+    --sidebar-width: 230px;
+}
+
+/* ============================================================
+   DARK THEME COLORS
+   ============================================================ */
+[data-theme="dark"] {
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --surface-raised: #2d2d2d;
+    --ink: #e0e0e0;
+    --ink-soft: #a0a0a0;
+    --border: #333333;
+    --primary: #4caf50; /* Brighter green for dark mode */
+    --primary-dark: #2e7d32;
+    --primary-soft: #1b5e20;
+    --accent: #81c784;
+    --accent-soft: #2e7d32;
+    --gold: #fbc02d;
+    --gold-soft: #4a3c11;
+    --danger: #ef5350;
+    --danger-soft: #4a1c1c;
+    --success: #66bb6a;
+    --success-soft: #1b5e20;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Karla', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    margin: 0;
+    font-size: 16px;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3 { font-family: 'Zilla Slab', Georgia, serif; font-weight: 700; color: var(--primary); }
+
+/* ---------------- Header / Top Navbar ---------------- */
+.topbar {
+    background: var(--surface);
+    color: var(--ink);
+    padding: 16px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+    transition: background 0.3s ease;
+}
+.topbar h2 { color: var(--primary); margin: 0; font-size: 23px; display: flex; align-items: center; gap: 10px; }
+.topbar a, .topbar a.back { color: var(--ink); text-decoration: none; font-size: 16px; border-bottom: 1px solid rgba(38,50,56,0.3); padding-bottom: 2px; }
+[data-theme="dark"] .topbar a { border-bottom-color: rgba(224,224,224,0.3); }
+.topbar a:hover { border-bottom-color: var(--accent); color: var(--primary); }
+.topbar .user-info { font-size: 16px; color: var(--ink); display: flex; align-items: center; gap: 15px; }
+.topbar .user-info a { background: var(--primary); color: #ffffff; padding: 6px 14px; border-radius: var(--radius); border: none; }
+.topbar .user-info a:hover { background: var(--accent); }
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    background: transparent; border: 1px solid var(--border); color: var(--ink);
+    font-size: 18px; cursor: pointer; border-radius: 50%; width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+.theme-toggle-btn:hover { background: var(--primary-soft); border-color: var(--primary); }
+
+/* ---------------- Sidebar ---------------- */
+.app-shell { display: flex; min-height: calc(100vh - 68px); }
+.sidebar { width: var(--sidebar-width); background: var(--primary); padding: 22px 0; flex-shrink: 0; transition: background 0.3s ease; }
+[data-theme="dark"] .sidebar { background: #1a1a1a; border-right: 1px solid var(--border); }
+.sidebar a { display: flex; align-items: center; gap: 10px; color: #ffffff; text-decoration: none; padding: 12px 24px; font-size: 16px; font-weight: 600; border-left: 4px solid transparent; transition: 0.2s; }
+.sidebar a .icon { font-size: 20px; }
+.sidebar a:hover, .sidebar a.active { background: var(--accent); border-left-color: var(--gold); }
+.main-content { flex: 1; padding: 30px; }
+
+.welcome-panel { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: var(--radius-lg); padding: 26px 30px; transition: background 0.3s; }
+.welcome-panel p { color: var(--ink-soft); line-height: 1.6; }
+
+/* ---------------- Layout ---------------- */
+.container { max-width: 1100px; margin: 32px auto; padding: 0 20px; }
+.header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.header-row h3 { margin: 0; }
+
+/* ---------------- Cards ---------------- */
+.card, .form-box, .summary-card, .presc-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: background 0.3s, border-color 0.3s;
+}
+.card, .form-box { padding: 22px 26px; margin-bottom: 22px; }
+.summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.summary-card { padding: 18px; text-align: center; border-left: 4px solid var(--accent); }
+.summary-card .value { font-size: 27px; font-weight: 700; color: var(--primary); font-family: 'Zilla Slab', serif; }
+.summary-card .label { font-size: 14.5px; color: var(--ink-soft); margin-top: 4px; }
+
+/* ---------------- Buttons ---------------- */
+.btn { background: var(--primary); color: #ffffff; padding: 9px 16px; border-radius: var(--radius); text-decoration: none; font-size: 16px; border: none; cursor: pointer; display: inline-block; font-family: 'Karla', sans-serif; font-weight: 600; transition: 0.2s; }
+.btn:hover { background: var(--accent); }
+.btn-edit, .btn-view { background: var(--accent); }
+.btn-delete { background: var(--danger); }
+.add-row-btn { background: var(--accent); margin-top: 5px; padding: 8px; font-size: 14.5px; }
+.remove-row-btn { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger); border-radius: var(--radius); cursor: pointer; padding: 9px 12px; font-size: 14.5px; }
+
+/* ---------------- Forms ---------------- */
+label { display: block; margin: 12px 0 5px; font-size: 16px; font-weight: 600; color: var(--ink); }
+input[type="text"], input[type="password"], input[type="email"], input[type="number"],
+input[type="date"], select, textarea {
+    width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: var(--radius);
+    font-size: 16px; font-family: 'Karla', sans-serif; background: var(--surface-raised); color: var(--ink);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { border-color: #444; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+button[type="submit"] { margin-top: 20px; width: 100%; padding: 11px; background: var(--success); color: #ffffff; border: none; border-radius: var(--radius); cursor: pointer; font-size: 17px; font-weight: 600; transition: 0.2s; }
+button[type="submit"]:hover { background: var(--accent); }
+.error-msg { color: var(--danger); margin-top: 10px; font-size: 16px; }
+.info-note { font-size: 14.5px; color: var(--ink-soft); margin-top: -5px; margin-bottom: 10px; }
+
+.search-box { margin-bottom: 20px; display: flex; gap: 10px; }
+.search-box input[type="text"] { flex: 1; }
+.search-box .btn, .search-box button[type="submit"] { flex-shrink: 0; width: auto; margin-top: 0; padding: 9px 20px; }
+
+.med-row { display: grid; grid-template-columns: 2fr 1fr 2fr auto; gap: 8px; margin-bottom: 10px; align-items: center; }
+
+/* ---------------- Tables ---------------- */
+table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); transition: background 0.3s; }
+th, td { padding: 12px 14px; text-align: left; font-size: 16px; }
+th { background: var(--primary); color: #ffffff; font-weight: 600; }
+[data-theme="dark"] th { background: #2d2d2d; }
+tr:nth-child(even) { background: var(--bg); }
+[data-theme="dark"] tr:nth-child(even) { background: #242424; }
+tr.low-stock { background: var(--danger-soft) !important; }
+td.actions { display: flex; gap: 8px; }
+.legend { margin-bottom: 15px; font-size: 14.5px; color: var(--ink-soft); }
+.empty-msg { color: var(--ink-soft); font-size: 17px; text-align: center; padding: 30px 0; }
+
+/* ---------------- Badges ---------------- */
+.status-badge, .role-badge, .badge { padding: 4px 11px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+.status-Pending { background: var(--gold-soft); color: var(--gold); }
+.status-Issued { background: var(--success-soft); color: var(--success); }
+.status-Partially.Issued, .status-PartiallyIssued { background: var(--accent-soft); color: var(--primary); }
+.badge-expired { background: var(--danger-soft); color: var(--danger); }
+.badge-soon { background: var(--gold-soft); color: var(--gold); }
+.low-warn { color: var(--danger); font-size: 13px; }
+.done-tag { color: var(--success); font-weight: 700; font-size: 14.5px; }
+
+/* ---------------- Dashboard Backgrounds (Overridden for Dark Mode) ---------------- */
+body.dashboard-page { min-height: 100vh; }
+body.dashboard-page .app-shell {
+    background: linear-gradient(180deg, rgba(245,249,245,0.55) 0%, rgba(245,249,245,0.7) 100%), url('images/dashboard-bg.jpg') center 30% / cover no-repeat fixed;
+}
+[data-theme="dark"] body.dashboard-page .app-shell {
+    background: linear-gradient(180deg, rgba(18,18,18,0.85) 0%, rgba(18,18,18,0.95) 100%), url('images/dashboard-bg.jpg') center 30% / cover no-repeat fixed;
+}
+
+body.dashboard-page .main-content h3 { background: var(--surface); display: inline-block; padding: 4px 14px; border-radius: var(--radius); }
+
+body.photo-medicines, body.photo-people, body.photo-prescriptions { background-attachment: fixed; background-position: center 30%; background-size: cover; background-repeat: no-repeat; min-height: 100vh; }
+body.photo-medicines { background-image: linear-gradient(180deg, rgba(245,249,245,0.15) 0%, rgba(245,249,245,0.3) 220px, rgba(245,249,245,0.55) 100%), url('images/medicines-bg.jpg'); }
+body.photo-people { background-image: linear-gradient(180deg, rgba(245,249,245,0.15) 0%, rgba(245,249,245,0.3) 220px, rgba(245,249,245,0.55) 100%), url('images/people-bg.jpg'); }
+body.photo-prescriptions { background-image: linear-gradient(180deg, rgba(245,249,245,0.15) 0%, rgba(245,249,245,0.3) 220px, rgba(245,249,245,0.55) 100%), url('images/prescriptions-bg.jpg'); }
+
+/* Dark mode overrides for photo backgrounds */
+[data-theme="dark"] body.photo-medicines { background-image: linear-gradient(180deg, rgba(18,18,18,0.7) 0%, rgba(18,18,18,0.85) 100%), url('images/medicines-bg.jpg'); }
+[data-theme="dark"] body.photo-people { background-image: linear-gradient(180deg, rgba(18,18,18,0.7) 0%, rgba(18,18,18,0.85) 100%), url('images/people-bg.jpg'); }
+[data-theme="dark"] body.photo-prescriptions { background-image: linear-gradient(180deg, rgba(18,18,18,0.7) 0%, rgba(18,18,18,0.85) 100%), url('images/prescriptions-bg.jpg'); }
+
+body.photo-medicines .topbar, body.photo-people .topbar, body.photo-prescriptions .topbar { background: var(--surface); }
+
+/* ---------------- Printable documents ---------------- */
+.print-page { max-width: 900px; margin: 30px auto; background: #ffffff; color: #263238; padding: 40px 50px; border: 1px solid #dfece0; border-radius: var(--radius); }
+/* Note: Print pages keep light mode colors always because they are for printing */
+
+@media print {
+    body { background: #fff !important; color: #000 !important; }
+    .topbar, .print-actions, .sidebar { display: none !important; }
+    .print-page { border: none; box-shadow: none; margin: 0; padding: 0; max-width: 100%; }
+}
