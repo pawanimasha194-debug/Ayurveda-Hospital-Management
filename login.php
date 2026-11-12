@@ -48,79 +48,251 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="reception-style.css">
+<style>
+    /* ============================================================
+       LOGIN PAGE SPECIFIC STYLES (Fixing the broken layout)
+       ============================================================ */
+    * { box-sizing: border-box; }
+
+    body.login-page {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Karla', sans-serif;
+        /* ලස්සන පසුබිමක් - ඔයාට ඕන නම් මෙතන url('images/login-bg.jpg') දාන්න පුළුවන් */
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* පසුබිමේ ලස්සන ස්වභාවික රවුම් */
+    body.login-page::before, body.login-page::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        z-index: 0;
+    }
+    body.login-page::before {
+        width: 400px; height: 400px;
+        background: rgba(27, 94, 32, 0.1);
+        top: -100px; left: -100px;
+    }
+    body.login-page::after {
+        width: 300px; height: 300px;
+        background: rgba(201, 162, 39, 0.15);
+        bottom: -50px; right: -50px;
+    }
+
+    .login-box-wrapper {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 520px;
+        padding: 20px;
+    }
+
+    .login-box {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        padding: 45px 40px;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(27, 94, 32, 0.15);
+        text-align: center;
+    }
+
+    .login-logo {
+        width: 70px; height: 70px; border-radius: 50%;
+        background: linear-gradient(135deg, #1b5e20, #4caf50);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px; margin: -80px auto 15px;
+        box-shadow: 0 8px 20px rgba(27,94,32,0.3);
+        border: 4px solid #fff;
+    }
+
+    .login-hospital-name {
+        color: #1b5e20; font-family: 'Zilla Slab', serif; font-weight: 700;
+        font-size: 24px; margin-bottom: 4px;
+    }
+
+    .login-box h2 {
+        color: #5f6f68; font-size: 15px; font-weight: 500; font-family: 'Karla', sans-serif;
+        margin: 0 0 25px;
+    }
+
+    /* --- Role Selection Cards --- */
+    .role-label {
+        color: #1b5e20; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+        margin-bottom: 12px; text-align: left; font-weight: 700;
+    }
+
+    .role-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px;
+    }
+
+    .role-card {
+        background: #f8fbf7; border: 1.5px solid #dfece0; border-radius: 12px;
+        padding: 12px 5px; text-align: center; cursor: pointer; transition: all 0.2s ease;
+        color: #5f6f68;
+    }
+    
+    .role-card:hover { background: #fff; border-color: #c8e6c9; transform: translateY(-2px); }
+    
+    .role-card.selected {
+        background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+        border-color: #1b5e20; color: #fff;
+        box-shadow: 0 8px 20px rgba(27,94,32,0.25);
+        transform: translateY(-3px) scale(1.02);
+    }
+
+    .role-icon { font-size: 22px; display: block; margin-bottom: 5px; }
+    .role-name { font-size: 11.5px; font-weight: 700; letter-spacing: 0.5px; }
+
+    /* --- Form Inputs --- */
+    .login-box input[type="text"],
+    .login-box input[type="password"] {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 15px;
+        font-family: 'Karla', sans-serif;
+        color: #1b5e20;
+        background: #ffffff;
+        border: 1.5px solid #dfece0;
+        border-radius: 10px;
+        outline: none;
+        transition: all 0.2s ease;
+        margin-bottom: 12px;
+    }
+
+    .login-box input:focus {
+        border-color: #4caf50;
+        box-shadow: 0 0 0 4px rgba(76,175,80,0.15);
+        transform: translateY(-1px);
+    }
+
+    /* --- Button --- */
+    .login-box button {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: 'Karla', sans-serif;
+        cursor: pointer;
+        margin-top: 8px;
+        box-shadow: 0 6px 18px rgba(27,94,32,0.3);
+        transition: all 0.2s ease;
+    }
+
+    .login-box button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(27,94,32,0.4);
+        background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%);
+    }
+
+    /* --- Error Message --- */
+    .error-msg {
+        background: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        margin-top: 15px;
+        border: 1px solid #ef9a9a;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+</style>
 </head>
 <body class="login-page">
 
-<div class="login-box login-box-wide">
-    <div class="login-logo">🌿</div>
-    <div class="login-hospital-name">Gampaha Beheth Sappuwa</div>
-    <h2>Ayurveda Hospital Management System</h2>
+<div class="login-box-wrapper">
+    <div class="login-box">
+        <div class="login-logo">🌿</div>
+        <div class="login-hospital-name">ගම්පහ බෙහෙත් ශාලාව</div>
+        <h2>Ayurveda Hospital Management System</h2>
 
-    <form method="POST" action="login.php" id="loginForm" autocomplete="off">
-        <div class="role-label">Select Your Role</div>
-        <div class="role-grid">
-            <div class="role-card" data-role="admin">
-                <div class="role-icon">👤</div>
-                <div class="role-name">Admin</div>
+        <form method="POST" action="login.php" id="loginForm" autocomplete="off">
+            <div class="role-label">Select Your Role</div>
+            <div class="role-grid">
+                <div class="role-card" data-role="admin">
+                    <div class="role-icon">👤</div>
+                    <div class="role-name">Admin</div>
+                </div>
+                <div class="role-card" data-role="doctor">
+                    <div class="role-icon">🩺</div>
+                    <div class="role-name">Doctor</div>
+                </div>
+                <div class="role-card" data-role="pharmacist">
+                    <div class="role-icon">💊</div>
+                    <div class="role-name">Pharmacist</div>
+                </div>
+                <div class="role-card" data-role="reception">
+                    <div class="role-icon">🛎️</div>
+                    <div class="role-name">Reception</div>
+                </div>
             </div>
-            <div class="role-card" data-role="doctor">
-                <div class="role-icon">🩺</div>
-                <div class="role-name">Doctor</div>
-            </div>
-            <div class="role-card" data-role="pharmacist">
-                <div class="role-icon">💊</div>
-                <div class="role-name">Pharmacist</div>
-            </div>
-            <div class="role-card" data-role="reception">
-                <div class="role-icon">🛎️</div>
-                <div class="role-name">Reception</div>
-            </div>
-        </div>
-        <input type="hidden" name="role" id="roleInput" value="<?php echo htmlspecialchars($selected_role); ?>">
+            
+            <input type="hidden" name="role" id="roleInput" value="<?php echo htmlspecialchars($selected_role); ?>">
 
-        <input type="text" name="username" id="usernameInput" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
-    <?php if ($error): ?>
-        <div class="error-msg"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
+            <input type="text" name="username" id="usernameInput" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            
+            <button type="submit">Login</button>
+        </form>
+
+        <?php if ($error): ?>
+            <div class="error-msg">
+                <span>⚠️</span> <?php echo htmlspecialchars($error); ?>
+            </div>
+        <?php endif; ?>
+    </div>
 </div>
 
 <script>
-const roleCards = document.querySelectorAll('.role-card');
-const roleInput = document.getElementById('roleInput');
-const usernameInput = document.getElementById('usernameInput');
-const defaultUsernames = ['admin', 'doctor', 'pharmacist', 'reception'];
+    const roleCards = document.querySelectorAll('.role-card');
+    const roleInput = document.getElementById('roleInput');
+    const usernameInput = document.getElementById('usernameInput');
+    const defaultUsernames = ['admin', 'doctor', 'pharmacist', 'reception'];
 
-if (roleInput.value) {
-    roleCards.forEach(c => {
-        if (c.dataset.role === roleInput.value) c.classList.add('selected');
-    });
-}
-
-roleCards.forEach(card => {
-    card.addEventListener('click', () => {
-        roleCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        const role = card.dataset.role;
-        roleInput.value = role;
-
-        // Auto-fill username if empty or still a default
-        if (!usernameInput.value || defaultUsernames.includes(usernameInput.value)) {
-            usernameInput.value = role;
-        }
-        usernameInput.placeholder = `Enter ${role} username`;
-    });
-});
-
-document.getElementById('loginForm').addEventListener('submit', (e) => {
-    if (!roleInput.value) {
-        e.preventDefault();
-        alert('Please select a role first.');
+    // ඉස්සෙල්ලාම select කරපු role එක තියෙනවා නම් ඒක highlight කරන්න
+    if (roleInput.value) {
+        roleCards.forEach(c => {
+            if (c.dataset.role === roleInput.value) c.classList.add('selected');
+        });
     }
-});
+
+    roleCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // අනිත් ඒවායේ 'selected' class එක අයින් කරන්න
+            roleCards.forEach(c => c.classList.remove('selected'));
+            // ක්ලික් කරපු එකට 'selected' class එක දාන්න
+            card.classList.add('selected');
+            
+            const role = card.dataset.role;
+            roleInput.value = role;
+
+            // Username එක හිස් නම් හෝ පරණ default එකක් නම් ඔටෝම role එක දාන්න
+            if (!usernameInput.value || defaultUsernames.includes(usernameInput.value)) {
+                usernameInput.value = role;
+            }
+            usernameInput.placeholder = `Enter ${role} username`;
+        });
+    });
+
+    // Role එකක් select කරලා නැතුව submit කරොත් block කරන්න
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        if (!roleInput.value) {
+            e.preventDefault();
+            alert('Please select a role first.');
+        }
+    });
 </script>
 
 </body>
