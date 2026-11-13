@@ -41,8 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $conn->begin_transaction();
         try {
-            $stmt = $conn->prepare("INSERT INTO prescriptions (patient_id, doctor_id, prescription_date, notes, status) VALUES (?, ?, ?, ?, 'Pending')");
-            $stmt->bind_param("iiss", $patient_id, $doctor_id, $prescription_date, $notes);
+            // ALUTH: token_id එකත් INSERT කරනවා
+            $stmt = $conn->prepare("INSERT INTO prescriptions (token_id, patient_id, doctor_id, prescription_date, notes, status) VALUES (?, ?, ?, ?, ?, 'Pending')");
+            $stmt->bind_param("iiiss", $from_token_id, $patient_id, $doctor_id, $prescription_date, $notes);
             $stmt->execute();
             $prescription_id = $conn->insert_id;
 
@@ -61,6 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $conn->commit();
 
+            // ටෝකන් එක COMPLETED කිරීම
             if ($from_token_id > 0) {
                 $conn->query("UPDATE tokens SET status='Completed', completed_at=NOW() WHERE token_id=" . intval($from_token_id));
             }
@@ -76,12 +78,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $patients = $conn->query("SELECT patient_id, full_name FROM patients ORDER BY full_name");
 $doctors = $conn->query("SELECT doctor_id, full_name FROM doctors ORDER BY full_name");
-// ALUTH: medicine_name_si ekath fetch karanawa
 $medicines = $conn->query("SELECT medicine_id, medicine_name, medicine_name_si FROM medicines ORDER BY medicine_name");
 
 $medicineOptions = "<option value=''>-- Select Medicine --</option>";
 while ($m = $medicines->fetch_assoc()) {
-    // ALUTH: Dropdown ekata Sinhala namath ekathu karanawa
     $si_name = !empty($m['medicine_name_si']) ? " (" . $m['medicine_name_si'] . ")" : "";
     $medicineOptions .= "<option value='{$m['medicine_id']}'>" . htmlspecialchars($m['medicine_name'] . $si_name) . "</option>";
 }
@@ -92,7 +92,7 @@ while ($m = $medicines->fetch_assoc()) {
 <meta charset="UTF-8">
 <title>New Prescription - Ayurveda Hospital System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Karla:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
 .med-row { display: grid; grid-template-columns: 2fr 0.7fr 1.8fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
@@ -218,7 +218,7 @@ button[type="submit"].save-btn:hover { transform: translateY(-2px); box-shadow: 
                         </div>
                         <div class="external-note-wrap">
                             <span class="note-icon">📝</span>
-                            <input type="text" name="external_note[]" class="external-note-input" placeholder="Note for pharmacy (optional) — e.g. 'Only brand X', 'Sugar-free version required'">
+                            <input type="text" name="external_note[]" class="external-note-input" placeholder="Note for pharmacy (optional) — e.g. 'Only brand X'">
                         </div>
                     </div>
                 </div>

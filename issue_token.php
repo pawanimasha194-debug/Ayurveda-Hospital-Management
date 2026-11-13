@@ -10,6 +10,7 @@ restrictTo(['reception']);
 $error = "";
 $issued_token = null;
 
+// Pre-select patient if coming from registration success screen
 $preselect_id = isset($_GET['patient_id']) ? intval($_GET['patient_id']) : 0;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -17,6 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone_number    = trim($_POST['phone_number']);
     $illness_details = trim($_POST['illness_details']);
     $linked_patient_id = isset($_POST['linked_patient_id']) ? intval($_POST['linked_patient_id']) : 0;
+    
+    // රෝගියා සිස්ටම් එකේ නැත්නම් (walk-in), linked_patient_id එක 0 වෙනවා. 
+    // Database එකට NULL විදිහට යවන්න අපි ඒක හදාගමු.
+    $db_patient_id = ($linked_patient_id > 0) ? $linked_patient_id : null;
 
     if ($patient_name == '') {
         $error = "Patient name is required.";
@@ -26,13 +31,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $next = intval($r->fetch_assoc()['max_t']) + 1;
 
         $created_by = $_SESSION['user_id'];
-        $stmt = $conn->prepare("INSERT INTO tokens (token_number, token_date, patient_name, phone_number, illness_details, status, created_by) VALUES (?, ?, ?, ?, ?, 'Waiting', ?)");
-        $stmt->bind_param("issssi", $next, $today, $patient_name, $phone_number, $illness_details, $created_by);
+        
+        // ALUTH: patient_id එකත් INSERT කරනවා
+        $stmt = $conn->prepare("INSERT INTO tokens (token_number, token_date, patient_id, patient_name, phone_number, illness_details, status, created_by) VALUES (?, ?, ?, ?, ?, ?, 'Waiting', ?)");
+        $stmt->bind_param("isisssi", $next, $today, $db_patient_id, $patient_name, $phone_number, $illness_details, $created_by);
 
         if ($stmt->execute()) {
-            // රෝගියා සිස්ටම් එකේ ඉන්නවා නම්, එයාගේ Visit Count එක විතරක් වැඩි කරන්න (Type එක වෙනස් වෙන්නේ නෑ)
-            if ($linked_patient_id > 0) {
-                $conn->query("UPDATE patients SET visit_count = visit_count + 1, last_visit = '$today' WHERE patient_id = $linked_patient_id");
+            // රෝගියා සිස්ටම් එකේ ඉන්නවා නම්, එයාගේ Visit Count එක වැඩි කරන්න
+            if ($db_patient_id !== null) {
+                $conn->query("UPDATE patients SET visit_count = visit_count + 1, last_visit = '$today' WHERE patient_id = $db_patient_id");
             }
 
             $issued_token = [
@@ -102,7 +109,7 @@ if ($pres) {
 .patient-item-meta { font-size: 12.5px; color: #5f6f68; }
 .patient-item.selected .patient-item-meta { color: rgba(255,255,255,0.85); }
 
-/* Badges for Regular / Temporary */
+/* Badges */
 .badge-regular { background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: bold; border: 1px solid #a5d6a7; margin-left: 6px; }
 .badge-new { background: #fff8e1; color: #8a6d1a; padding: 2px 8px; border-radius: 10px; font-size: 10.5px; font-weight: bold; border: 1px solid #ffe082; margin-left: 6px; }
 .patient-item.selected .badge-regular, .patient-item.selected .badge-new { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.4); }
@@ -213,7 +220,6 @@ if ($pres) {
                         </div>
                         <div class="patient-item-meta"><?php echo htmlspecialchars($p['contact_number'] ?: 'No phone'); ?></div>
                     </div>
-                    <!-- Patient ID with Prefix -->
                     <div class="patient-item-id">#<?php echo $prefix . str_pad($p['patient_id'], 4, '0', STR_PAD_LEFT); ?></div>
                 </div>
             <?php endforeach; endif; ?>

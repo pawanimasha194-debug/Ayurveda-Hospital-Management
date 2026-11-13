@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-restrictTo(['pharmacist']); // Pharmacist and admin only
+restrictTo(['pharmacist']);
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
@@ -20,9 +20,9 @@ $baseQuery = "SELECT m.*, nb.expiry_date AS nearest_expiry, nb.batch_no, nb.rece
               ";
 
 if ($search != '') {
-    $stmt = $conn->prepare($baseQuery . " WHERE m.medicine_name LIKE ? OR m.medicine_type LIKE ? ORDER BY m.medicine_id DESC");
+    $stmt = $conn->prepare($baseQuery . " WHERE m.medicine_name LIKE ? OR m.medicine_name_si LIKE ? OR m.medicine_type LIKE ? ORDER BY m.medicine_id DESC");
     $likeSearch = "%$search%";
-    $stmt->bind_param("ss", $likeSearch, $likeSearch);
+    $stmt->bind_param("sss", $likeSearch, $likeSearch, $likeSearch);
     $stmt->execute();
     $result = $stmt->get_result();
 } else {
@@ -33,10 +33,11 @@ if ($search != '') {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Medicines - Ayurveda Hospital System</title>
+<title>Medicines - ගම්පහ බෙහෙත් ශාලාව</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="theme-toggle.js"></script>
 </head>
 <body class="photo-medicines">
 
@@ -52,7 +53,7 @@ if ($search != '') {
     </div>
 
     <form method="GET" class="search-box">
-        <input type="text" name="search" placeholder="Search by name or type..." value="<?php echo htmlspecialchars($search); ?>">
+        <input type="text" name="search" placeholder="Search by name (English/Sinhala) or type..." value="<?php echo htmlspecialchars($search); ?>">
         <button type="submit" class="btn">Search</button>
     </form>
 
@@ -60,17 +61,13 @@ if ($search != '') {
 
     <table>
         <tr>
-            <th>ID</th>
+            <th>Med ID</th>
             <th>Name</th>
             <th>Type</th>
-            <th>Unit</th>
             <th>Current Stock</th>
-            <th>Reorder Level</th>
-            <th>Unit Price</th>
             <th>Nearest Expiry</th>
             <th>Batch No</th>
             <th>Supplier</th>
-            <th>Last Received</th>
             <th>Actions</th>
         </tr>
         <?php while ($row = $result->fetch_assoc()):
@@ -92,17 +89,20 @@ if ($search != '') {
             }
         ?>
         <tr class="<?php echo $lowStock ? 'low-stock' : ''; ?>">
-            <td><?php echo $row['medicine_id']; ?></td>
-            <td><?php echo htmlspecialchars($row['medicine_name']); ?></td>
+            <!-- Custom Medicine Code -->
+            <td><b>MED-<?php echo str_pad($row['medicine_id'], 3, '0', STR_PAD_LEFT); ?></b></td>
+            <td>
+                <?php echo htmlspecialchars($row['medicine_name']); ?>
+                <?php if (!empty($row['medicine_name_si'])): ?>
+                    <br><span style="font-size: 13px; color: #5f6f68;"><?php echo htmlspecialchars($row['medicine_name_si']); ?></span>
+                <?php endif; ?>
+            </td>
             <td><?php echo htmlspecialchars($row['medicine_type']); ?></td>
-            <td><?php echo htmlspecialchars($row['unit']); ?></td>
-            <td><?php echo $row['current_stock']; ?></td>
-            <td><?php echo $row['reorder_level']; ?></td>
-            <td><?php echo number_format($row['unit_price'], 2); ?></td>
+            <td><?php echo $row['current_stock']; ?> <?php echo htmlspecialchars($row['unit']); ?></td>
             <td><?php if ($expiryClass): ?><span class="badge <?php echo $expiryClass; ?>"><?php echo $expiryLabel; ?></span><?php else: ?><?php echo $expiryLabel; ?><?php endif; ?></td>
-            <td><?php echo htmlspecialchars($row['batch_no'] ?? '-'); ?></td>
+            <!-- Custom Batch Code -->
+            <td><span style="font-family: monospace; font-weight: bold; color: #c9a227;"><?php echo htmlspecialchars($row['batch_no'] ?? '-'); ?></span></td>
             <td><?php echo htmlspecialchars($row['supplier_name'] ?? '-'); ?></td>
-            <td><?php echo $row['last_received'] ?? '-'; ?></td>
             <td class="actions">
                 <a href="edit_medicine.php?id=<?php echo $row['medicine_id']; ?>" class="btn btn-edit">Edit</a>
                 <a href="delete_medicine.php?id=<?php echo $row['medicine_id']; ?>" class="btn btn-delete" onclick="return confirm('Delete this medicine?');">Delete</a>

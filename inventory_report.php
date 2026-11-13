@@ -6,13 +6,11 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-restrictTo(['pharmacist']); // Pharmacist and admin only
+restrictTo(['pharmacist']);
 
-// Optional period filter (defaults to last 30 days -> today)
 $period_from = isset($_GET['from']) ? $_GET['from'] : date('Y-m-d', strtotime('-30 days'));
 $period_to = isset($_GET['to']) ? $_GET['to'] : date('Y-m-d');
 
-// Medicine list with assigned supplier (from most recent batch) and stock status
 $sql = "SELECT m.*,
                (SELECT s2.supplier_name FROM medicine_batches b2
                 JOIN suppliers s2 ON s2.supplier_id = b2.supplier_id
@@ -43,7 +41,7 @@ $totalCount = count($medicines);
 <meta charset="UTF-8">
 <title>Inventory Status Report - <?php echo htmlspecialchars($hospital_name_en); ?></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Karla:wght@400;500;600;700&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="photo-medicines">
@@ -72,7 +70,7 @@ $totalCount = count($medicines);
     <h3 style="margin-bottom:8px;">MEDICINE INVENTORY DETAILS</h3>
     <table class="print-table">
         <tr>
-            <th>#</th>
+            <th>Code</th>
             <th>Medicine</th>
             <th>Category</th>
             <th>Assigned Supplier</th>
@@ -81,12 +79,18 @@ $totalCount = count($medicines);
             <th>Unit Price</th>
             <th>Stock Status</th>
         </tr>
-        <?php $i = 1; foreach ($medicines as $row):
+        <?php foreach ($medicines as $row):
             $isLow = $row['current_stock'] <= $row['reorder_level'];
         ?>
         <tr>
-            <td><?php echo $i++; ?></td>
-            <td><?php echo htmlspecialchars($row['medicine_name']); ?></td>
+            <!-- Custom Code MED-001 -->
+            <td><b>MED-<?php echo str_pad($row['medicine_id'], 3, '0', STR_PAD_LEFT); ?></b></td>
+            <td>
+                <?php echo htmlspecialchars($row['medicine_name']); ?>
+                <?php if (!empty($row['medicine_name_si'])): ?>
+                    <br><small style="font-family: 'Noto Sans Sinhala', sans-serif; color: #666; font-size: 12px;"><?php echo htmlspecialchars($row['medicine_name_si']); ?></small>
+                <?php endif; ?>
+            </td>
             <td><?php echo htmlspecialchars($row['medicine_type']); ?></td>
             <td><?php echo htmlspecialchars($row['assigned_supplier'] ?: '-'); ?></td>
             <td><?php echo $row['current_stock']; ?></td>

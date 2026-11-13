@@ -17,6 +17,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// ============================================================
+// මේ පේළිය තමයි අලුතෙන් එකතු වුණේ (සිංහල අකුරු හරියට පෙන්න)
+// ============================================================
+$conn->set_charset("utf8mb4");
+
 // Start session (used across all pages for login state)
 session_start();
 

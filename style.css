@@ -2,7 +2,7 @@
    Ayurveda Hospital Management System — Shared Design System
    Light & Dark Theme
    ============================================================ */
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;700&display=swap');
 :root {
     /* Default Light Theme */
     --bg: #f5f9f5;

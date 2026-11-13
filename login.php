@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <link rel="stylesheet" href="style.css">
 <style>
     /* ============================================================
-       LOGIN PAGE SPECIFIC STYLES (Fixing the broken layout)
+       LOGIN PAGE SPECIFIC STYLES (With Background Photo)
        ============================================================ */
     * { box-sizing: border-box; }
 
@@ -62,28 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         justify-content: center;
         align-items: center;
         font-family: 'Karla', sans-serif;
-        /* ලස්සන පසුබිමක් - ඔයාට ඕන නම් මෙතන url('images/login-bg.jpg') දාන්න පුළුවන් */
-        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        /* මෙතන තමයි අර පින්තූරේ ආයේ දාලා තියෙන්නේ */
+        background: linear-gradient(180deg, rgba(18, 61, 22, 0.6) 0%, rgba(27, 94, 32, 0.75) 100%),
+                    url('images/login-bg.jpg') center 25% / cover no-repeat fixed;
         position: relative;
         overflow: hidden;
-    }
-
-    /* පසුබිමේ ලස්සන ස්වභාවික රවුම් */
-    body.login-page::before, body.login-page::after {
-        content: '';
-        position: absolute;
-        border-radius: 50%;
-        z-index: 0;
-    }
-    body.login-page::before {
-        width: 400px; height: 400px;
-        background: rgba(27, 94, 32, 0.1);
-        top: -100px; left: -100px;
-    }
-    body.login-page::after {
-        width: 300px; height: 300px;
-        background: rgba(201, 162, 39, 0.15);
-        bottom: -50px; right: -50px;
     }
 
     .login-box-wrapper {
@@ -94,14 +77,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         padding: 20px;
     }
 
+    /* Glassmorphism Card */
     .login-box {
         background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.5);
         padding: 45px 40px;
         border-radius: 24px;
-        box-shadow: 0 20px 40px rgba(27, 94, 32, 0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         text-align: center;
     }
 
@@ -110,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         background: linear-gradient(135deg, #1b5e20, #4caf50);
         display: flex; align-items: center; justify-content: center;
         font-size: 32px; margin: -80px auto 15px;
-        box-shadow: 0 8px 20px rgba(27,94,32,0.3);
+        box-shadow: 0 8px 20px rgba(27,94,32,0.4);
         border: 4px solid #fff;
     }
 
@@ -145,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     .role-card.selected {
         background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
         border-color: #1b5e20; color: #fff;
-        box-shadow: 0 8px 20px rgba(27,94,32,0.25);
+        box-shadow: 0 8px 20px rgba(27,94,32,0.3);
         transform: translateY(-3px) scale(1.02);
     }
 
@@ -170,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     .login-box input:focus {
         border-color: #4caf50;
-        box-shadow: 0 0 0 4px rgba(76,175,80,0.15);
+        box-shadow: 0 0 0 4px rgba(76,175,80,0.2);
         transform: translateY(-1px);
     }
 
@@ -261,7 +245,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     const usernameInput = document.getElementById('usernameInput');
     const defaultUsernames = ['admin', 'doctor', 'pharmacist', 'reception'];
 
-    // ඉස්සෙල්ලාම select කරපු role එක තියෙනවා නම් ඒක highlight කරන්න
     if (roleInput.value) {
         roleCards.forEach(c => {
             if (c.dataset.role === roleInput.value) c.classList.add('selected');
@@ -270,15 +253,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     roleCards.forEach(card => {
         card.addEventListener('click', () => {
-            // අනිත් ඒවායේ 'selected' class එක අයින් කරන්න
             roleCards.forEach(c => c.classList.remove('selected'));
-            // ක්ලික් කරපු එකට 'selected' class එක දාන්න
             card.classList.add('selected');
-            
             const role = card.dataset.role;
             roleInput.value = role;
 
-            // Username එක හිස් නම් හෝ පරණ default එකක් නම් ඔටෝම role එක දාන්න
             if (!usernameInput.value || defaultUsernames.includes(usernameInput.value)) {
                 usernameInput.value = role;
             }
@@ -286,7 +265,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
     });
 
-    // Role එකක් select කරලා නැතුව submit කරොත් block කරන්න
     document.getElementById('loginForm').addEventListener('submit', (e) => {
         if (!roleInput.value) {
             e.preventDefault();
